@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "448844255047",
+    "project_id": "psw-journal-journey",
+    "storage_bucket": "psw-journal-journey.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:448844255047:android:2b08f7316f4c0ab7d58662",
+        "android_client_info": {
+          "package_name": "com.example.psw_journal_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD0O0tdlbvNlKTrEj3Cmc8F8Zp4t4f_CNU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
