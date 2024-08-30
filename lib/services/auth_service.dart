@@ -20,7 +20,7 @@ class AuthService {
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (BuildContext context) => const Home(),
+            builder: (BuildContext context) => Home(),
           ));
     } on FirebaseAuthException catch (e) {
       String message = '';
@@ -48,7 +48,7 @@ class AuthService {
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (BuildContext context) => const Home(),
+            builder: (BuildContext context) => Home(),
           ));
     } on FirebaseAuthException catch (e) {
       String message = '';

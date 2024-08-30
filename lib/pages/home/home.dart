@@ -6,8 +6,35 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 
-class Home extends StatelessWidget {
-  const Home({super.key});
+class Home extends StatefulWidget {
+  @override
+  _homeState createState() => _homeState();
+}
+
+class _homeState extends State<Home> {
+  String search = "";
+  String filter = "All";
+  DateTime? dateAfter;
+  DateTime? dateBefore;
+
+  Future<void> _pickDateTime(
+      {required ValueChanged<DateTime?> onDatePicked}) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null) {
+      onDatePicked(DateTime(
+        picked.year,
+        picked.month,
+        picked.day,
+        0,
+        0,
+      ));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +62,98 @@ class Home extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      decoration: const InputDecoration(
+                        prefixIcon: Icon(Icons.search),
+                        hintText: "Search",
+                        contentPadding: EdgeInsets.symmetric(vertical: 15),
+                      ),
+                      onChanged: (value) => {
+                        setState(() {
+                          search = value;
+                        })
+                      },
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  DropdownButton<String>(
+                    value: filter,
+                    items: <String>['All', 'Content/Title', 'Tags', 'Location']
+                        .map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        filter = newValue!;
+                      });
+                    },
+                    itemHeight: 48,
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    underline: SizedBox(),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  const Text("From:"),
+                  TextButton(
+                    onPressed: () async {
+                      await _pickDateTime(
+                        onDatePicked: (date) {
+                          setState(() {
+                            dateAfter = date;
+                          });
+                        },
+                      );
+                    },
+                    child: Text(dateAfter != null
+                        ? DateFormat.yMd().format(dateAfter!)
+                        : "No date selected"),
+                  ),
+                  FittedBox(
+                    child: TextButton(
+                        onPressed: () {
+                          setState(() {
+                            dateAfter = null;
+                          });
+                        },
+                        child: Text("X")),
+                  ),
+                  const SizedBox(width: 14),
+                  const Text("To:"),
+                  TextButton(
+                    onPressed: () async {
+                      await _pickDateTime(
+                        onDatePicked: (date) {
+                          setState(() {
+                            dateBefore = date;
+                          });
+                        },
+                      );
+                    },
+                    child: Text(dateBefore != null
+                        ? DateFormat.yMd().format(dateBefore!)
+                        : "No date selected"),
+                  ),
+                  FittedBox(
+                    child: TextButton(
+                        onPressed: () {
+                          setState(() {
+                            dateBefore = null;
+                          });
+                        },
+                        child: Text("X")),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
               TextButton(
                 style: ButtonStyle(
                   foregroundColor:
@@ -73,12 +192,13 @@ class Home extends StatelessWidget {
   }
 
   Widget _buildJournalList(String userId) {
+    CollectionReference journals =
+        FirebaseFirestore.instance.collection('journals');
+
+    Query query = journals.where('userId', isEqualTo: userId);
+
     return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance
-          .collection('journals')
-          .where('userId', isEqualTo: userId)
-          .orderBy('datetime', descending: true)
-          .snapshots(),
+      stream: query.orderBy('datetime', descending: true).snapshots(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());
@@ -91,7 +211,51 @@ class Home extends StatelessWidget {
           return Center(child: Text('No journal entries found.'));
         }
 
-        final journalDocs = snapshot.data!.docs;
+        final journalDocs = snapshot.data!.docs.where((doc) {
+          if (dateAfter != null &&
+              doc['datetime'].toDate().isBefore(dateAfter)) {
+            return false;
+          }
+          if (dateBefore != null &&
+              doc['datetime'].toDate().isAfter(dateBefore)) {
+            return false;
+          }
+
+          if (search.isNotEmpty) {
+            if (filter == "All") {
+              String content = doc['content'];
+              String title = doc['title'];
+              List<String> searchTags =
+                  search.split(',').map((tag) => tag.trim()).toList();
+              List<String> tags = List<String>.from(doc['tags']);
+              bool match = searchTags.any((searchTag) =>
+                  tags.any((docTag) => docTag.contains(searchTag)));
+              String location = doc['location'];
+              return content.contains(search) ||
+                  title.contains(search) ||
+                  match ||
+                  location.contains(search);
+            }
+            if (filter == "Content/Title") {
+              String content = doc['content'];
+              String title = doc['title'];
+              return content.contains(search) || title.contains(search);
+            }
+            if (filter == "Tags") {
+              List<String> searchTags =
+                  search.split(',').map((tag) => tag.trim()).toList();
+              List<String> tags = List<String>.from(doc['tags']);
+              bool match = searchTags.any((searchTag) =>
+                  tags.any((docTag) => docTag.contains(searchTag)));
+              return match;
+            }
+            if (filter == "Location") {
+              String location = doc['location'];
+              return location.contains(search);
+            }
+          }
+          return search.isEmpty;
+        }).toList();
 
         return ListView.builder(
           itemCount: journalDocs.length,
