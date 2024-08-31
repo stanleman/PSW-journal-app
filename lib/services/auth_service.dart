@@ -2,9 +2,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:psw_journal_app/pages/home/home.dart';
 import 'package:psw_journal_app/pages/login/login.dart';
+import 'package:psw_journal_app/pages/root.dart';
 import 'package:toast/toast.dart';
 
 class AuthService {
+  Future<User?> loggedInUser() async {
+    return FirebaseAuth.instance.currentUser;
+  }
+
   Future<void> signup({
     required String email,
     required String password,
@@ -20,7 +25,7 @@ class AuthService {
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (BuildContext context) => Home(),
+            builder: (BuildContext context) => RootPage(),
           ));
     } on FirebaseAuthException catch (e) {
       String message = '';
@@ -29,7 +34,7 @@ class AuthService {
       } else if (e.code == 'email-already-in-use') {
         message = 'Email already in use';
       }
-      Toast.show(message);
+      print(message);
     }
   }
 
@@ -48,16 +53,14 @@ class AuthService {
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (BuildContext context) => Home(),
+            builder: (BuildContext context) => RootPage(),
           ));
     } on FirebaseAuthException catch (e) {
-      String message = '';
-      if (e.code == "weak password") {
-        message = 'The password is too weak';
-      } else if (e.code == 'email-already-in-use') {
-        message = 'Email already in use';
+      if (e.code == 'user-not-found') {
+        print('No user found for that email.');
+      } else if (e.code == 'wrong-password') {
+        print('Wrong password provided for that user.');
       }
-      Toast.show(message);
     }
   }
 
