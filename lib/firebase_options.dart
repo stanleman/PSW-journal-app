@@ -3,6 +3,7 @@
 import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, kIsWeb, TargetPlatform;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 /// Default [FirebaseOptions] for use with your Firebase apps.
 ///
@@ -40,47 +41,47 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyDtQT7mLxkv3S7EJ5webXNZRRUicy6Gr2M',
-    appId: '1:448844255047:web:8452e16fd1c0514dd58662',
-    messagingSenderId: '448844255047',
-    projectId: 'psw-journal-journey',
-    authDomain: 'psw-journal-journey.firebaseapp.com',
-    storageBucket: 'psw-journal-journey.appspot.com',
+  static FirebaseOptions web = FirebaseOptions(
+    apiKey: dotenv.env['WEB_WIN_API_KEY'].toString(),
+    appId: dotenv.env['WEB_APP_ID'].toString(),
+    messagingSenderId: dotenv.env['MESSENGER_ID'].toString(),
+    projectId: dotenv.env['PROJECT_ID'].toString(),
+    authDomain: dotenv.env['AUTH_DOMAIN'].toString(),
+    storageBucket: dotenv.env['STORAGE_BUCKET'].toString(),
   );
 
-  static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyD0O0tdlbvNlKTrEj3Cmc8F8Zp4t4f_CNU',
-    appId: '1:448844255047:android:2b08f7316f4c0ab7d58662',
-    messagingSenderId: '448844255047',
-    projectId: 'psw-journal-journey',
-    storageBucket: 'psw-journal-journey.appspot.com',
+  static FirebaseOptions android = FirebaseOptions(
+    apiKey: dotenv.env['ANDROID_API_KEY'].toString(),
+    appId: dotenv.env['ANDROID_APP_ID'].toString(),
+    messagingSenderId: dotenv.env['MESSENGER_ID'].toString(),
+    projectId: dotenv.env['PROJECT_ID'].toString(),
+    storageBucket: dotenv.env['STORAGE_BUCKET'].toString(),
   );
 
-  static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyDUtrfd-TpxP_PUXH9yEBgJr2SLg0JKq8s',
-    appId: '1:448844255047:ios:e73f664329b1c3a9d58662',
-    messagingSenderId: '448844255047',
-    projectId: 'psw-journal-journey',
-    storageBucket: 'psw-journal-journey.appspot.com',
-    iosBundleId: 'com.example.pswJournalApp',
+  static FirebaseOptions ios = FirebaseOptions(
+    apiKey: dotenv.env['IOS_MAC_API_KEY'].toString(),
+    appId: dotenv.env['IOS_MAC_APP_ID'].toString(),
+    messagingSenderId: dotenv.env['MESSENGER_ID'].toString(),
+    projectId: dotenv.env['PROJECT_ID'].toString(),
+    storageBucket: dotenv.env['STORAGE_BUCKET'].toString(),
+    iosBundleId: dotenv.env['IOS_MAC_BUNDLE_ID'].toString(),
   );
 
-  static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyDUtrfd-TpxP_PUXH9yEBgJr2SLg0JKq8s',
-    appId: '1:448844255047:ios:e73f664329b1c3a9d58662',
-    messagingSenderId: '448844255047',
-    projectId: 'psw-journal-journey',
-    storageBucket: 'psw-journal-journey.appspot.com',
-    iosBundleId: 'com.example.pswJournalApp',
+  static FirebaseOptions macos = FirebaseOptions(
+    apiKey: dotenv.env['IOS_MAC_API_KEY'].toString(),
+    appId: dotenv.env['IOS_MAC_APP_ID'].toString(),
+    messagingSenderId: dotenv.env['MESSENGER_ID'].toString(),
+    projectId: dotenv.env['PROJECT_ID'].toString(),
+    storageBucket: dotenv.env['STORAGE_BUCKET'].toString(),
+    iosBundleId: dotenv.env['IOS_MAC_BUNDLE_ID'].toString(),
   );
 
-  static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyDtQT7mLxkv3S7EJ5webXNZRRUicy6Gr2M',
-    appId: '1:448844255047:web:2d68978e28fd7ff3d58662',
-    messagingSenderId: '448844255047',
-    projectId: 'psw-journal-journey',
-    authDomain: 'psw-journal-journey.firebaseapp.com',
-    storageBucket: 'psw-journal-journey.appspot.com',
+  static FirebaseOptions windows = FirebaseOptions(
+    apiKey: dotenv.env['WEB_WIN_API_KEY'].toString(),
+    appId: dotenv.env['WIN_APP_ID'].toString(),
+    messagingSenderId: dotenv.env['MESSENGER_ID'].toString(),
+    projectId: dotenv.env['PROJECT_ID'].toString(),
+    authDomain: dotenv.env['AUTH_DOMAIN'].toString(),
+    storageBucket: dotenv.env['STORAGE_BUCKET'].toString(),
   );
 }
