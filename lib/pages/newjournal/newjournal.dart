@@ -1,9 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:intl/intl.dart';
-import 'package:location/location.dart' as loc;
 
 class AddJournalEntryPage extends StatefulWidget {
   @override
@@ -17,7 +15,6 @@ class _AddJournalEntryPageState extends State<AddJournalEntryPage> {
   final TextEditingController _locationController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
   DateTime? _selectedDate;
-  String? _location;
 
   Future<void> _pickDateTime() async {
     final DateTime? picked = await showDatePicker(
