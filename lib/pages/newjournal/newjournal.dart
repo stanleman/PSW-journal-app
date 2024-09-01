@@ -56,9 +56,14 @@ class _AddJournalEntryPageState extends State<AddJournalEntryPage> {
         'userId': FirebaseAuth.instance.currentUser!.uid
       });
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Journal entry added')),
-      );
+      final snackBar = SnackBar(
+          content: const Text('Journal entry added.'),
+          action: SnackBarAction(
+            label: 'Close',
+            onPressed: () {},
+          ),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
 
       Navigator.pop(context);
     }
@@ -66,77 +71,154 @@ class _AddJournalEntryPageState extends State<AddJournalEntryPage> {
 
   @override
   Widget build(BuildContext context) {
+    var now = DateTime.now();
+    String formattedDate = DateFormat('EEEE, MMMM d').format(now).toUpperCase();
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Add Journal Entry'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
+      backgroundColor: Color(0xffCBF1F5),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              TextFormField(
-                controller: _textController,
-                decoration: InputDecoration(labelText: 'Title'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter some text';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 16.0),
-              TextFormField(
-                controller: _contentController,
-                decoration: InputDecoration(labelText: 'Content'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please content';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 16.0),
               Row(
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Text(_selectedDate == null
-                      ? 'No date selected'
-                      : DateFormat.yMd().add_jm().format(_selectedDate!)),
-                  Spacer(),
-                  TextButton(
-                    onPressed: _pickDateTime,
-                    child: Text('Select Date & Time'),
+                  IconButton(
+                    iconSize: 24,
+                    icon: const Icon(
+                      Icons.arrow_back_sharp,
+                    ),
+                    // the method which is called
+                    // when button is pressed
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
                   ),
+                  Text(formattedDate)
                 ],
               ),
-              SizedBox(height: 16.0),
-              TextFormField(
-                controller: _locationController,
-                decoration: InputDecoration(labelText: 'Location'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a location';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 16.0),
-              TextFormField(
-                controller: _tagsController,
-                decoration:
-                    InputDecoration(labelText: 'Tags (comma separated)'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a tag';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 24.0),
-              ElevatedButton(
-                onPressed: _saveJournalEntry,
-                child: Text('Save Entry'),
+              Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    TextFormField(
+                      controller: _textController,
+                      decoration: InputDecoration(
+                          border: InputBorder.none, hintText: "Title"),
+                      style:
+                          TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Title can\'t be empty';
+                        }
+                        return null;
+                      },
+                    ),
+                    TextFormField(
+                      controller: _contentController,
+                      keyboardType: TextInputType.multiline,
+                      maxLines: null,
+                      minLines: 12,
+                      decoration: const InputDecoration(
+                          border: InputBorder.none,
+                          hintText: "Start writing down your thoughts..."),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Content can\'t be empty';
+                        }
+                        return null;
+                      },
+                    ),
+                    SizedBox(height: 16.0),
+                    Row(
+                      children: [
+                        Text(_selectedDate == null
+                            ? 'No date selected'
+                            : DateFormat.yMd().add_jm().format(_selectedDate!)),
+                        Spacer(),
+                        TextButton(
+                          onPressed: _pickDateTime,
+                          child: Text('Select Date & Time'),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 16.0),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Location',
+                          style: TextStyle(fontSize: 14),
+                        ),
+                        const SizedBox(
+                          height: 8,
+                        ),
+                        TextFormField(
+                          controller: _locationController,
+                          decoration: InputDecoration(
+                              filled: true,
+                              fillColor: Colors.white,
+                              border: OutlineInputBorder(
+                                  borderSide: BorderSide.none,
+                                  borderRadius: BorderRadius.circular(10))),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter a location';
+                            }
+                            return null;
+                          },
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 16.0),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Tags (comma separated)',
+                          style: TextStyle(fontSize: 14),
+                        ),
+                        const SizedBox(
+                          height: 8,
+                        ),
+                        TextFormField(
+                          controller: _tagsController,
+                          decoration: InputDecoration(
+                              filled: true,
+                              fillColor: Colors.white,
+                              border: OutlineInputBorder(
+                                  borderSide: BorderSide.none,
+                                  borderRadius: BorderRadius.circular(10))),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter at least a tag';
+                            }
+                            return null;
+                          },
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 40.0),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xff0D6EFD),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        minimumSize: const Size(double.infinity, 60),
+                        elevation: 0,
+                      ),
+                      onPressed: _saveJournalEntry,
+                      child: const Text(
+                        "Save entry",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                    SizedBox(height: 30.0),
+                  ],
+                ),
               ),
             ],
           ),
