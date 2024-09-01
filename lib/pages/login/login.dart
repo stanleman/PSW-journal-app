@@ -3,13 +3,25 @@ import 'package:psw_journal_app/services/auth_service.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
-class Login extends StatelessWidget {
-  Login({super.key});
+class Login extends StatefulWidget {
+  Login({super.key, required this.setMode});
 
-  final TextEditingController _emailController =
-      TextEditingController(text: "123@gmail.com");
-  final TextEditingController _passwordController =
-      TextEditingController(text: "123123");
+  final Function setMode;
+
+  @override
+  State<Login> createState() => _LoginState();
+}
+
+class _LoginState extends State<Login> {
+  final TextEditingController _emailController = TextEditingController();
+
+  final TextEditingController _passwordController = TextEditingController();
+
+  String errorText = "";
+
+  void localSetMode() {
+    widget.setMode(false);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,6 +70,18 @@ class Login extends StatelessWidget {
                       height: 15,
                     ),
                     _password(),
+                    if (errorText != "")
+                      Column(
+                        children: [
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          Text(
+                            errorText,
+                            style: const TextStyle(color: Colors.red),
+                          ),
+                        ],
+                      ),
                     const SizedBox(
                       height: 30,
                     ),
@@ -65,7 +89,9 @@ class Login extends StatelessWidget {
                   ],
                 ),
               ),
-              const SizedBox(height: 30,),
+              const SizedBox(
+                height: 30,
+              ),
               _signup(context)
             ],
           ),
@@ -86,6 +112,9 @@ class Login extends StatelessWidget {
           height: 8,
         ),
         TextField(
+          onChanged: (value) => setState(() {
+            errorText = "";
+          }),
           controller: _emailController,
           decoration: InputDecoration(
               filled: true,
@@ -110,6 +139,9 @@ class Login extends StatelessWidget {
           height: 8,
         ),
         TextField(
+          onChanged: (value) => setState(() {
+            errorText = "";
+          }),
           obscureText: true,
           controller: _passwordController,
           decoration: InputDecoration(
@@ -134,10 +166,21 @@ class Login extends StatelessWidget {
         elevation: 0,
       ),
       onPressed: () async {
-        await AuthService().signin(
+        String tempResult = await AuthService().signin(
             email: _emailController.text,
             password: _passwordController.text,
             context: context);
+        setState(() {
+          errorText = tempResult;
+        });
+        if (tempResult == 'success') {
+          final snackBar = SnackBar(
+            content: const Text('Logged in successfully.'),
+            showCloseIcon: true,
+            behavior: SnackBarBehavior.floating,
+          );
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        }
       },
       child: const Text(
         "Sign In",
@@ -167,10 +210,11 @@ class Login extends StatelessWidget {
                     fontSize: 16),
                 recognizer: TapGestureRecognizer()
                   ..onTap = () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => Signup()),
-                    );
+                    localSetMode();
+                    // Navigator.pushReplacement(
+                    //   context,
+                    //   MaterialPageRoute(builder: (context) => Signup()),
+                    // );
                   }),
           ])),
     );
