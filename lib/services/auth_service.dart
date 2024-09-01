@@ -6,7 +6,7 @@ import 'package:psw_journal_app/pages/root.dart';
 import 'package:toast/toast.dart';
 
 class AuthService {
-  Future<User?> loggedInUser() async {
+  User? loggedInUser() {
     return FirebaseAuth.instance.currentUser;
   }
 
@@ -66,8 +66,8 @@ class AuthService {
 
   Future<void> signout({required BuildContext context}) async {
     await FirebaseAuth.instance.signOut();
-    await Future.delayed(const Duration(seconds: 1));
-    Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (BuildContext context) => Login()));
+    // await Future.delayed(const Duration(seconds: 1));
+    // Navigator.pushReplacement(
+    //     context, MaterialPageRoute(builder: (BuildContext context) => Login()));
   }
 }

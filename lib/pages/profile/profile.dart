@@ -18,6 +18,8 @@ class _ProfilePageState extends State<ProfilePage> {
     super.initState();
   }
 
+  final User? user = AuthService().loggedInUser();
+
   Widget build(BuildContext context) {
     return SafeArea(
       child: Container(
@@ -27,39 +29,58 @@ class _ProfilePageState extends State<ProfilePage> {
           children: [
             Column(
               children: [
-                Image.asset(
+                Container(
+                  decoration: BoxDecoration(shape: BoxShape.circle, ),
+                  clipBehavior: Clip.antiAlias,
+                  child: Image.asset(
                   'assets/images/guest.jpg',
                   width: 100,
                   height: 100,
                 ),
+                ),
                 const SizedBox(
-                  height: 5,
+                  height: 15,
                 ),
-                FutureBuilder<User?>(
-                  future: AuthService().loggedInUser(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return CircularProgressIndicator(); // Show a loading spinner
-                    } else if (snapshot.hasError) {
-                      return Text(
-                          'Error retrieving data: ${snapshot.error}'); // Show error message
-                    } else if (snapshot.hasData && snapshot.data != null) {
-                      return Text(
-                        '${snapshot.data!.email}',
-                        style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 24,
-                            fontWeight: FontWeight.w600),
-                      );
-                    } else {
-                      return const Text('Anonymous',
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 24,
-                              fontWeight: FontWeight.w600));
-                    }
-                  },
+                Text(
+                  user?.email != null ? "Signed in as": "",
+                  style: const TextStyle(
+                      color: Colors.black,
+                      height: 1,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w400),
                 ),
+                Text(
+                  user?.email ?? "Not signed in",
+                  style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 24,
+                      fontWeight: FontWeight.w600),
+                ),
+                // FutureBuilder<User?>(
+                //   future: AuthService().loggedInUser(),
+                //   builder: (context, snapshot) {
+                //     if (snapshot.connectionState == ConnectionState.waiting) {
+                //       return CircularProgressIndicator(); // Show a loading spinner
+                //     } else if (snapshot.hasError) {
+                //       return Text(
+                //           'Error retrieving data: ${snapshot.error}'); // Show error message
+                //     } else if (snapshot.hasData && snapshot.data != null) {
+                //       return Text(
+                //         '${snapshot.data!.email}',
+                //         style: const TextStyle(
+                //             color: Colors.black,
+                //             fontSize: 24,
+                //             fontWeight: FontWeight.w600),
+                //       );
+                //     } else {
+                //       return const Text('Anonymous',
+                //           style: TextStyle(
+                //               color: Colors.black,
+                //               fontSize: 24,
+                //               fontWeight: FontWeight.w600));
+                //     }
+                //   },
+                // ),
               ],
             ),
             _logout(context),
@@ -87,10 +108,7 @@ class _ProfilePageState extends State<ProfilePage> {
         await AuthService().signout(context: context);
         final snackBar = SnackBar(
           content: const Text('Logged out successfully.'),
-          action: SnackBarAction(
-            label: 'Close',
-            onPressed: () {},
-          ),
+          showCloseIcon: true,
         );
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
       },

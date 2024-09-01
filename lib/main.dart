@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:psw_journal_app/firebase_options.dart';
 import 'package:psw_journal_app/pages/login/login.dart';
+import 'package:psw_journal_app/pages/newjournal/newjournal.dart';
+import 'package:psw_journal_app/pages/root.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,6 +20,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(debugShowCheckedModeBanner: false, home: Login());
+    return MaterialApp(debugShowCheckedModeBanner: false, home: RootPage());
+    // return MaterialApp(debugShowCheckedModeBanner: false, home: AddJournalEntryPage());
   }
 }
