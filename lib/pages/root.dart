@@ -82,7 +82,7 @@ class RootPageState extends State<RootPage> {
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.amber[800],
+        selectedItemColor: Color.fromARGB(255, 35, 166, 173),
         onTap: _onItemTapped,
       ),
     ); // If user is logge
