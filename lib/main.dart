@@ -6,13 +6,18 @@ import 'package:psw_journal_app/pages/login/login.dart';
 import 'package:psw_journal_app/pages/newjournal/newjournal.dart';
 import 'package:psw_journal_app/pages/root.dart';
 
-Future<void> main() async {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName: ".env");
+  await initializeFirebase();
+  runApp(MyApp());
+}
 
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-
-  runApp(const MyApp());
+Future<void> initializeFirebase() async {
+  if (Firebase.apps.isEmpty) {
+    await Firebase.initializeApp();
+  } else {
+    print("Firebase is already initialized");
+  }
 }
 
 class MyApp extends StatelessWidget {
