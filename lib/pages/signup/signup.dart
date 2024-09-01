@@ -3,11 +3,24 @@ import 'package:psw_journal_app/services/auth_service.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
-class Signup extends StatelessWidget {
-  Signup({super.key});
+class Signup extends StatefulWidget {
+  Signup({super.key, required this.setMode});
 
+  final Function setMode;
+
+  @override
+  State<Signup> createState() => _SignupState();
+}
+
+class _SignupState extends State<Signup> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+
+  String errorText = "";
+
+  void localSetMode() {
+    widget.setMode(true);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +69,18 @@ class Signup extends StatelessWidget {
                       height: 15,
                     ),
                     _password(),
+                    if (errorText != "")
+                      Column(
+                        children: [
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          Text(
+                            errorText,
+                            style: const TextStyle(color: Colors.red),
+                          ),
+                        ],
+                      ),
                     const SizedBox(
                       height: 30,
                     ),
@@ -87,6 +112,9 @@ class Signup extends StatelessWidget {
         ),
         TextField(
           controller: _emailController,
+          onChanged: (value) => setState(() {
+            errorText = "";
+          }),
           decoration: InputDecoration(
               filled: true,
               fillColor: const Color(0xffCBF1F5),
@@ -111,6 +139,9 @@ class Signup extends StatelessWidget {
         ),
         TextField(
           obscureText: true,
+          onChanged: (value) => setState(() {
+            errorText = "";
+          }),
           controller: _passwordController,
           decoration: InputDecoration(
               filled: true,
@@ -134,10 +165,13 @@ class Signup extends StatelessWidget {
         elevation: 0,
       ),
       onPressed: () async {
-        await AuthService().signup(
+        String tempResult = await AuthService().signup(
             email: _emailController.text,
             password: _passwordController.text,
             context: context);
+        setState(() {
+          errorText = tempResult;
+        });
       },
       child: const Text(
         "Sign Up",
@@ -167,10 +201,11 @@ class Signup extends StatelessWidget {
                     fontSize: 16),
                 recognizer: TapGestureRecognizer()
                   ..onTap = () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => Login()),
-                    );
+                    localSetMode();
+                    // Navigator.pushReplacement(
+                    //   context,
+                    //   MaterialPageRoute(builder: (context) => Login()),
+                    // );
                   }),
           ])),
     );

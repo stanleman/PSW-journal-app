@@ -205,14 +205,9 @@ class _homeState extends State<Home> {
         }
         if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
           return const SizedBox(
-            height: 800,
-            child: Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('No journal entries found.'),
-                ],
-              ),
+            height: 300,
+            child: Center(
+              child: Text('No journal entries found.'),
             ),
           );
         }
