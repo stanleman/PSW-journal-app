@@ -42,15 +42,14 @@ class _ProfilePageState extends State<ProfilePage> {
                   height: 15,
                 ),
                 Text(
-                  user?.email != null ? "Signed in as": "",
-                  style: const TextStyle(
-                      color: Colors.black,
-                      height: 1,
-                      fontSize: 16,
+                  user?.email != null ? "SIGNED IN AS": "",
+                  style: TextStyle(
+                      color: Colors.grey[600],
+                      fontSize: 12,
                       fontWeight: FontWeight.w400),
                 ),
                 Text(
-                  user?.email ?? "Not signed in",
+                  user?.email ?? "NOT SIGNED IN",
                   style: const TextStyle(
                       color: Colors.black,
                       fontSize: 24,

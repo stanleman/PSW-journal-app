@@ -60,8 +60,51 @@ class _EditJournalEntryPageState extends State<EditJournalEntryPage> {
         behavior: SnackBarBehavior.floating,
       );
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      Navigator.pop(context); // Go back to the previous page
+      Navigator.pop(context);
     });
+  }
+
+  void _deleteJournal() async {
+    // Show a confirmation dialog before deleting
+    bool? confirmDelete = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Delete Journal Entry'),
+          content:
+              const Text('Are you sure you want to delete this journal entry?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context, false);
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                const snackBar = SnackBar(
+                  content: Text('Journal entry deleted.'),
+                  showCloseIcon: true,
+                  behavior: SnackBarBehavior.floating,
+                );
+                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                Navigator.pop(context, true);
+                Navigator.pop(context);
+              },
+              child: const Text('Delete'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmDelete == true) {
+      // Delete the journal entry from Firestore
+      await FirebaseFirestore.instance
+          .collection('journals')
+          .doc(widget.entryId)
+          .delete();
+    }
   }
 
   @override
@@ -212,6 +255,22 @@ class _EditJournalEntryPageState extends State<EditJournalEntryPage> {
                       onPressed: _saveChanges,
                       child: const Text(
                         "Save entry",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                    SizedBox(height: 10.0),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color.fromARGB(255, 253, 13, 13),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        minimumSize: const Size(double.infinity, 60),
+                        elevation: 0,
+                      ),
+                      onPressed: _deleteJournal,
+                      child: const Text(
+                        "Delete entry",
                         style: TextStyle(color: Colors.white),
                       ),
                     ),

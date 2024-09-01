@@ -62,6 +62,7 @@ class _AddJournalEntryPageState extends State<AddJournalEntryPage> {
             label: 'Close',
             onPressed: () {},
           ),
+          behavior: SnackBarBehavior.floating,
         );
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
 
@@ -71,8 +72,8 @@ class _AddJournalEntryPageState extends State<AddJournalEntryPage> {
 
   @override
   Widget build(BuildContext context) {
-    var now = DateTime.now();
-    String formattedDate = DateFormat('EEEE, MMMM d').format(now).toUpperCase();
+    // var now = DateTime.now();
+    // String formattedDate = DateFormat('EEEE, MMMM d').format(now).toUpperCase();
     return Scaffold(
       backgroundColor: Color(0xffCBF1F5),
       body: SingleChildScrollView(
@@ -94,7 +95,8 @@ class _AddJournalEntryPageState extends State<AddJournalEntryPage> {
                       Navigator.pop(context);
                     },
                   ),
-                  Text(formattedDate)
+                  // Text(formattedDate)
+                  const Text("NEW JOURNAL")
                 ],
               ),
               Form(
@@ -130,12 +132,14 @@ class _AddJournalEntryPageState extends State<AddJournalEntryPage> {
                       },
                     ),
                     SizedBox(height: 16.0),
-                    Row(
+                    Wrap(
+                      alignment: WrapAlignment.start,
+                      runAlignment: WrapAlignment.start,
+                      crossAxisAlignment: WrapCrossAlignment.center,
                       children: [
                         Text(_selectedDate == null
                             ? 'No date selected'
                             : DateFormat.yMd().add_jm().format(_selectedDate!)),
-                        Spacer(),
                         TextButton(
                           onPressed: _pickDateTime,
                           child: Text('Select Date & Time'),
